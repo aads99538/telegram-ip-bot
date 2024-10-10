@@ -1,4 +1,4 @@
-Python==3.12.7
+Python==3.11
 Flask==3.0.3
 Werkzeug==3.0.4
 requests==2.27.1
