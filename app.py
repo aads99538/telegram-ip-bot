@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template_string
 import requests
 import telegram
 
@@ -15,9 +15,7 @@ def send_telegram_message(message):
 
 @app.route('/')
 def index():
-  user_ip = request.remote_addr
+  user_ip = requests.get('https://ip-api.com/json').json().get('query', 'Неизвестно')
   message = f"IP пользователя: {user_ip}"
   send_telegram_message(message)
   return "IP отправлен!", 200
-
-if __name__ == "__main__":
