@@ -1,5 +1,5 @@
 import urllib3
-import request
+import requests
 import requests
 import telegram
 
